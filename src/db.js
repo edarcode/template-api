@@ -1,15 +1,15 @@
-import { Op, Sequelize } from "sequelize";
-import { defineUser } from "./models/User.js";
+import { Sequelize } from "sequelize";
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USER, PORT } from "./env/db.js";
 
-const sequelize =
+export const connDb =
 	process.env.NODE_ENV === "production"
 		? new Sequelize({
-				database: process.env.DB_NAME,
+				database: DB_NAME,
 				dialect: "postgres",
-				host: process.env.DB_HOST,
-				port: 5432,
-				username: process.env.DB_USER,
-				password: process.env.DB_PASSWORD,
+				host: DB_HOST,
+				port: PORT,
+				username: DB_USER,
+				password: DB_PASSWORD,
 				pool: {
 					max: 3,
 					min: 1,
@@ -26,18 +26,6 @@ const sequelize =
 				ssl: true
 		  })
 		: new Sequelize(
-				`postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}`,
+				`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`,
 				{ logging: false, native: false }
 		  );
-
-defineUser(sequelize);
-
-const {} = sequelize.models;
-
-// Relaciones
-
-export default {
-	Op,
-	...sequelize.models,
-	conn: sequelize
-};
